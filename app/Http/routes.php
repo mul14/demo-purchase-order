@@ -1,16 +1,27 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to call when that URI is requested.
-|
-*/
-
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::get('/api/artno', function () {
+    $artno = request('q');
+
+    $items = App\Item::where('artno', 'LIKE', "%$artno%")->get();
+
+    return $items->map(function ($item) {
+        return [
+            'id' => $item->artno,
+            'text' => $item->artno,
+        ];
+    });
+});
+
+Route::get('/api/artno/{artno}', function ($artno) {
+    return App\Item::where('artno', $artno)->first([
+        'id',
+        'artno',
+        'price',
+        'description',
+    ]);
 });
